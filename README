@@ -1,0 +1,51 @@
+                   #######################################
+                   #     Yet Another Argument Parser     #
+                   #######################################
+
+yaap is an simple command line argument parser in C++. It is released under 
+the simplified BSD licence.
+
+Usage: just include yaap.h - You may want to copy this file where you main 
+function is:
+
+#include <yaap.h>
+
+It defines a namespace 'yaap'. You can then instanciate a Parser by giving 
+posix argument count and argument vector (namely argc, argv):
+
+yaap::Parser parser( argc, argv );
+
+Then build your options layout by adding them to the parser:
+1) Simple options:
+
+yaap::Option* firstOption = parser.AddOption( 'f', "This is the first option");
+
+Where 'f' is the character that defines the option in the command line and "..."
+is a simple description of the effect of this option. You can check the presence
+of the option with:
+firstOption->Exists( );
+It returns true if the option is found somewhere in the argument list.
+These options are introduced by '-' in the command line and can be concatenated
+(Posix specification). For instance, 
+   [shell]$ mycommand -ab -c -xzf
+is equivalent to
+   [shell]$ mycommand -abcxzf
+or
+   [shell]$ mycommand -fzxcba
+or
+   [shell]$ mycommand -f -z -x -c -b -a
+
+2) Options with arguments:
+
+yaap::OptionArg<int,2> secondOption = parser.AddOptionArg<int,2>('s', "This is 
+the second option with 2 arguments")
+
+Where 's' is the character that defines the option in the command line, "..." is
+a short description of the effect and <int,2> define the type (integer here) and
+the number (here is 2) of sub-arguments. The Exists() function is available as
+for the simple option, and the argument values are accessible via:
+   int a = secondOption->GetArgument( 0 );
+   int b = secondOption->GetArgument( 1 );
+
+ 
+                   
