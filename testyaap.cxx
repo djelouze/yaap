@@ -27,10 +27,13 @@ int main( int argc, char** argv )
    yaap::Option* verboseOpt = parser.AddOption('v', "Verbose output");
    // Add a simple option for ie. version display
    yaap::Option* versionOpt = parser.AddOption('V', "Display version");
+   // Add a simple option for usage display
+   yaap::Option* helpOpt = parser.AddOption('h', "Display a brief help");
+
 
 //////////////// NOW THE OPTIONS ARE DEFINED. JUTS USE THEM //////   
 
-   if( !parser.IsCommandLineValid( ) )
+   if( !parser.IsCommandLineValid( ) || helpOpt->Exists() || argc ==  1)
    {
       parser.Usage( );
       return( 0 );
