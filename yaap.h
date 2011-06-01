@@ -51,6 +51,7 @@ public:
         this->flag = flag;
         this->description = description;
         this->state = false;
+        this->required = false;
     };
 
     //! Get the flag of this option.
@@ -66,20 +67,30 @@ public:
         return(this->state);
     };
 
+   //! Set the requirement level (required is true, optional is false)
+   void SetRequired( bool r ){
+         this->required = r;
+  };
+
+   bool IsRequired( ){
+         return( this->required );
+   };
+
    //! Print how to use the option in the command line format
    virtual void CLUsage( )
    {
       std::cout << " [-" << this->Flag() << "]";
-   }
+   };
 
-
-    std::string GetDescription( )
-    {return( this->description );};
+   std::string GetDescription( ){
+           return( this->description );
+   };
 
 protected:
     char flag; //!< Command line flag character
     std::string description;//!< Short description
     bool state;//!< true if present in the command line
+    bool required;//!< if true, the absence of the option in the command line will raise an error in the parser.
 };
 
 //! \class OptionArg
@@ -114,7 +125,7 @@ public:
       for( int i = 0; i < nbArgs; i++ )
          std::cout << " x";
       std::cout << "]"; 
-   }
+   };
 
 protected:
     int nbArgs; //!< Number of arguments of this specific option
@@ -126,26 +137,27 @@ protected:
 class Parser {
 public:
     //! constructor. Initializes number of args and argument vector.
-    Parser( int argc, char** argv )
+    Parser( int argc, char** argv, std::string description = "" )
     {
         this->nbArgs = argc;
         this->argv = argv;
-        this->error = 0;
-    }
+        this->error = false;
+        this->description = description;
+    };
 
     //! destructor
     virtual ~Parser()
     {
         // todo: delete options
-    }
+    };
 
     //! Add a simple option with given flag and description to the options
     //! vector and check its existence.
     //! \return the instanciated Option
-    Option* AddOption( char flag, std::string description )
+    Option* AddOption( char flag, std::string description, bool required = false )
     {
         Option* option = new Option( flag, description );
-
+        option->SetRequired( required );
         // For each argument in the command, check the underlying string
         for( int i = 1; i < this->nbArgs; i++ )
         {
@@ -163,20 +175,24 @@ public:
         }
         // Put the Option in the options' array.
         this->optionVector.push_back( option );
+        // if required but not found, raise an error
+        if( !option->Exists() && required )
+           this->error = true;
         // Return the created Option for the user to use it in the main program
         return( option );
-    }
+    };
 
     //! Add an option with arguments with given flag and description to the
     //! options vector, check its existence and perform the sub-arguments
     //! assignment. There are N sub-arguments of type T.
     //! \return the instanciated OptionArg
     template<class T, int N>
-    OptionArg<T,N>* AddOptionArg( char flag, std::string description )
+    OptionArg<T,N>* AddOptionArg( char flag, std::string description, bool required = false )
     {
         // option allocation
         OptionArg<T,N>* option = new OptionArg<T,N>( flag, description );
-
+        option->SetRequired( required);
+  
         // parse the argument list
         for( int i = 1; i < this->nbArgs; i++ )
         {
@@ -201,29 +217,46 @@ public:
         }
         // Put the Option in the options' array.
         this->optionVector.push_back( option );
+        // if required but not found, raise an error
+        if( !option->Exists() && required )
+           this->error = true;
         // Return the created Option for the user to use it in the main program
         return( option );
-    }
+    };
 
    void Usage( )
    {
-      std::cout << "Usage: \n [shell]$ " << this->argv[0];
+      std::cout <<std::endl<< "Utility " << this->argv[0] << " :" << std::endl;
+      std::cout << std::endl<<this->description << std::endl;
+      std::cout << std::endl<<"Usage: \n [shell]$ " << this->argv[0];
       for( int i = 0; i < optionVector.size(); i++ )
          optionVector[i]->CLUsage();
       std::cout << std::endl;
 
       for( int i = 0; i < optionVector.size(); i++ )
-         std::cout << "\t -" << optionVector[i]->Flag() << " : " << optionVector[i]->GetDescription() << std::endl;
-   } 
+      {
+         std::string requirement;
+         if( optionVector[i]->IsRequired( ))
+            requirement = "Required";
+         else
+            requirement = "Optional";
+
+         std::cout << "\t -" << optionVector[i]->Flag() << " : " << optionVector[i]->GetDescription() << " ("<<requirement<<")."<<std::endl;
+      }
+   };
 
    bool IsCommandLineValid( )
    { return( !this->error );};
+
+   void SetDescription( std::string desc )
+   { this->description = desc; };
 
 private:
     int nbArgs; //!< Number of arguments (argc)
     char** argv; //!< Arguments' vector
     std::vector<Option*> optionVector; //!< vector of options
     bool error; //!< raised to 1 when one of the arguments in the command line is not valid
+    std::string description; //!< give a general description of the command.
 };
 
 
