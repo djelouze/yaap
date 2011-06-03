@@ -31,7 +31,7 @@ int main( int argc, char** argv )
    yaap::Option* helpOpt = parser.AddOption('h', "Display a brief help");
 
 
-//////////////// NOW THE OPTIONS ARE DEFINED. JUTS USE THEM //////   
+//////////////// NOW THE OPTIONS ARE DEFINED. JUST USE THEM //////   
 
    if( !parser.IsCommandLineValid( ) || helpOpt->Exists() || argc ==  1)
    {
