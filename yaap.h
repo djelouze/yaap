@@ -52,6 +52,7 @@ public:
         this->description = description;
         this->state = false;
         this->required = false;
+        this->error = false;
     };
 
     //! Get the flag of this option.
@@ -72,6 +73,16 @@ public:
          this->required = r;
   };
 
+   //! Set the error flag to true
+   void RaiseError( ){
+      this->error =true;
+   };
+   
+   //! Get the error state
+   bool ErrorFlag(){
+      return( this->error );
+   };
+
    bool IsRequired( ){
          return( this->required );
    };
@@ -91,6 +102,7 @@ protected:
     std::string description;//!< Short description
     bool state;//!< true if present in the command line
     bool required;//!< if true, the absence of the option in the command line will raise an error in the parser.
+    bool error; //!< if true, an error occured while parsing.
 };
 
 //! \class OptionArg
@@ -177,7 +189,10 @@ public:
         this->optionVector.push_back( option );
         // if required but not found, raise an error
         if( !option->Exists() && required )
+        {
+           option->RaiseError( );
            this->error = true;
+        }
         // Return the created Option for the user to use it in the main program
         return( option );
     };
@@ -203,7 +218,10 @@ public:
                     // toggle the state of the option to true
                     option->Exists(true);
                     if( i + N >= this->nbArgs )
+                    {
+                       option->RaiseError();
                        this->error = true;
+                    }
                     else
                        for( int argIdx = 1; argIdx <= N ; argIdx++)
                        {
@@ -213,7 +231,10 @@ public:
                            T arg;
                            argStream >> arg;
                            if( argStream.fail() )
+                           {
+                              option->RaiseError();
                               this->error = true;
+                           }
                            option->SetArgument( arg, argIdx-1 );
                        }
                 }
@@ -223,7 +244,10 @@ public:
         this->optionVector.push_back( option );
         // if required but not found, raise an error
         if( !option->Exists() && required )
+        {
            this->error = true;
+           option->RaiseError();
+        }
         // Return the created Option for the user to use it in the main program
         return( option );
     };
@@ -245,8 +269,15 @@ public:
          else
             requirement = "Optional";
 
-         std::cout << "\t -" << optionVector[i]->Flag() << " : " << optionVector[i]->GetDescription() << " ("<<requirement<<")."<<std::endl;
+         if( optionVector[i]->ErrorFlag() )
+            std::cout << "     *\t";
+         else
+            std::cout << "\t";
+         std::cout << "-" << optionVector[i]->Flag() 
+                   << " : " << optionVector[i]->GetDescription() 
+                   << " ("<<requirement<<")."<<std::endl;
       }
+      std::cout << "* indicate(s) wrong argument(s)."<< std::endl;
    };
 
    bool IsCommandLineValid( )
