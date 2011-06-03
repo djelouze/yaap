@@ -51,7 +51,7 @@ int main( int argc, char** argv )
 
    // Check input filename option
    std::cout << "Input filename: "; 
-   (inputOpt->Exists())? std::cout << inputOpt->GetArgument(0): std::cout << "n/a";
+   (inputOpt->Exists())? std::cout << inputOpt->GetValue(): std::cout << "n/a";
    std::cout << std::endl;
 
    // Check output filename option

@@ -130,6 +130,11 @@ public:
         return( argVector[pos] );
     };
 
+   //! Convenience function for 1-subarg argument
+   T GetValue( ){
+      return( argVector[0] );
+   };
+
    //! Print how to use the option in the command line format
    virtual void CLUsage( )
    {
