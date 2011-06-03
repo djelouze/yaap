@@ -202,16 +202,20 @@ public:
                 {
                     // toggle the state of the option to true
                     option->Exists(true);
-
-                    for( int argIdx = 1; argIdx <= N ; argIdx++)
-                    {
-                        // For each sub-argument, memorize the command line value in
-                        // the OptionArg object
-                       std::istringstream argStream( argv[i+argIdx] );
-                        T arg;
-                        argStream >> arg;
-                        option->SetArgument( arg, argIdx-1 );
-                    }
+                    if( i + N >= this->nbArgs )
+                       this->error = true;
+                    else
+                       for( int argIdx = 1; argIdx <= N ; argIdx++)
+                       {
+                           // For each sub-argument, memorize the command line value in
+                           // the OptionArg object
+                           std::istringstream argStream( argv[i+argIdx] );
+                           T arg;
+                           argStream >> arg;
+                           if( argStream.fail() )
+                              this->error = true;
+                           option->SetArgument( arg, argIdx-1 );
+                       }
                 }
             }
         }
