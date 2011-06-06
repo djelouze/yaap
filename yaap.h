@@ -111,7 +111,7 @@ protected:
 //! This is a templated class derived from Option. It adds a vector of
 //! arguments which type and number is defined by the template statements T
 //! and N.
-template<class T, int N>
+template<class T, unsigned int N>
 class OptionArg : public Option {
 
 public:
@@ -139,13 +139,13 @@ public:
    virtual void CLUsage( )
    {
       std::cout << " [-" << this->Flag();
-      for( int i = 0; i < nbArgs; i++ )
+      for( unsigned int i = 0; i < nbArgs; i++ )
          std::cout << " x";
       std::cout << "]"; 
    };
 
 protected:
-    int nbArgs; //!< Number of arguments of this specific option
+    unsigned int nbArgs; //!< Number of arguments of this specific option
     T argVector[N]; //!< Vector of arguments of type T
 };
 
@@ -176,12 +176,12 @@ public:
         Option* option = new Option( flag, description );
         option->SetRequired( required );
         // For each argument in the command, check the underlying string
-        for( int i = 1; i < this->nbArgs; i++ )
+        for( unsigned int i = 1; i < this->nbArgs; i++ )
         {
             if( this->argv[i][0] == '-' ) // This is an option(s) statement
             {
                 // The option flag can be concatenated after a unique '-'
-                int c = 0;
+                unsigned int c = 0;
                 while(argv[i][c] != '\0' )
                 {
                     if( argv[i][c] == option->Flag() ) // It is the processed option
@@ -206,7 +206,7 @@ public:
     //! options vector, check its existence and perform the sub-arguments
     //! assignment. There are N sub-arguments of type T.
     //! \return the instanciated OptionArg
-    template<class T, int N>
+    template<class T, unsigned int N>
     OptionArg<T,N>* AddOptionArg( char flag, std::string description, bool required = false )
     {
         // option allocation
@@ -214,7 +214,7 @@ public:
         option->SetRequired( required);
   
         // parse the argument list
-        for( int i = 1; i < this->nbArgs; i++ )
+        for( unsigned int i = 1; i < this->nbArgs; i++ )
         {
             if( this->argv[i][0] == '-' ) // This is an option(s) statement
             {
@@ -228,7 +228,7 @@ public:
                        this->error = true;
                     }
                     else
-                       for( int argIdx = 1; argIdx <= N ; argIdx++)
+                       for( unsigned int argIdx = 1; argIdx <= N ; argIdx++)
                        {
                            // For each sub-argument, memorize the command line value in
                            // the OptionArg object
@@ -262,11 +262,11 @@ public:
       std::cout <<std::endl<< "Utility " << this->argv[0] << " :" << std::endl;
       std::cout << std::endl<<this->description << std::endl;
       std::cout << std::endl<<"Usage: \n [shell]$ " << this->argv[0];
-      for( int i = 0; i < optionVector.size(); i++ )
+      for( unsigned int i = 0; i < optionVector.size(); i++ )
          optionVector[i]->CLUsage();
       std::cout << std::endl;
 
-      for( int i = 0; i < optionVector.size(); i++ )
+      for( unsigned int i = 0; i < optionVector.size(); i++ )
       {
          std::string requirement;
          if( optionVector[i]->IsRequired( ))
@@ -292,7 +292,7 @@ public:
    { this->description = desc; };
 
 private:
-    int nbArgs; //!< Number of arguments (argc)
+    unsigned int nbArgs; //!< Number of arguments (argc)
     char** argv; //!< Arguments' vector
     std::vector<Option*> optionVector; //!< vector of options
     bool error; //!< raised to 1 when one of the arguments in the command line is not valid
