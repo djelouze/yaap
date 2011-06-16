@@ -111,7 +111,7 @@ protected:
 //! This is a templated class derived from Option. It adds a vector of
 //! arguments which type and number is defined by the template statements T
 //! and N.
-template<class T, unsigned int N>
+template<typename T, unsigned int N>
 class OptionArg : public Option {
 
 public:
@@ -122,9 +122,8 @@ public:
     };
 
     //! Set the pos-th arg of type T.
-    void SetArgument( T arg, int pos ) {
-        this->argVector[pos] = arg;
-    };
+    void SetArgument( std::istringstream& streamArg, int pos );
+
     //! Get the pos-th arg of type T
     T GetArgument( int pos ) {
         return( argVector[pos] );
@@ -148,6 +147,35 @@ protected:
     unsigned int nbArgs; //!< Number of arguments of this specific option
     T argVector[N]; //!< Vector of arguments of type T
 };
+
+//! Template specialization of SetArgument - general definition
+template<typename T, unsigned int N>
+void OptionArg<T,N>::SetArgument( std::istringstream& streamArg, int pos )
+{
+   T arg;
+   streamArg >> arg;
+   if( streamArg.fail()) 
+   {
+      this->RaiseError();
+   }
+
+   this->argVector[pos] = arg;
+}
+
+//! Template specialization of SetArgument - istd::string definition
+template<>
+void OptionArg<std::string,1>::SetArgument( std::istringstream& streamArg, int pos )
+{
+   std::string arg;                  
+   std::getline(streamArg, arg);
+       
+   if( streamArg.fail())
+   {
+      this->RaiseError();
+   }
+
+   this->argVector[pos] = arg;
+}
 
 //! \class Parser
 //! \brief Manages a set of options
@@ -233,14 +261,8 @@ public:
                            // For each sub-argument, memorize the command line value in
                            // the OptionArg object
                            std::istringstream argStream( argv[i+argIdx] );
-                           T arg;
-                           argStream >> arg;
-                           if( argStream.fail() )
-                           {
-                              option->RaiseError();
-                              this->error = true;
-                           }
-                           option->SetArgument( arg, argIdx-1 );
+                           option->SetArgument( argStream, argIdx-1 );
+                           this->error = option->ErrorFlag();
                        }
                 }
             }
