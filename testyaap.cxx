@@ -23,6 +23,8 @@ int main( int argc, char** argv )
    yaap::OptionArg<double,3>* spacingOpt = parser.AddOptionArg<double,3>( 's', "Spacing (size of pixel): x y z (double)",true);
    // Add an option of type "-o filename"
    yaap::OptionArg<std::string,1>* outputOpt = parser.AddOptionArg<std::string,1>( 'o', "Output file (.vti)",true);
+   // Add an option "-t tag" where tag is a uint, possibly hexa.
+   yaap::OptionArg<unsigned int,1>* tagOpt = parser.AddOptionArg<unsigned int,1>( 't', "UINT Tag. Can be hexa (prefix with 0x)",true);
    // Add a simple option for ie. debugging information
    yaap::Option* verboseOpt = parser.AddOption('v', "Verbose output");
    // Add a simple option for ie. version display
@@ -56,7 +58,12 @@ int main( int argc, char** argv )
 
    // Check output filename option
    std::cout << "Output filename: "; 
-   (outputOpt->Exists())? std::cout << outputOpt->GetArgument(0): std::cout << "n/a";
+   (outputOpt->Exists())? std::cout << outputOpt->GetValue(): std::cout << "n/a";
+   std::cout << std::endl;
+   
+    // Check tag option
+   std::cout << "Tag: "; 
+   (tagOpt->Exists())? std::cout << tagOpt->GetValue(): std::cout << "n/a";
    std::cout << std::endl;
    
    // Check extent option
