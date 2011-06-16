@@ -2,7 +2,7 @@
 //! \brief Illustration of the Argument Parser yaap namespace
 //!
 //! try with for instance:
-//!   [shell]$ testyaap -i inputfile.txt -vV -o outputfile.raw -s .558 .558 0.89
+//!   [shell]$ testyaap -i inputfile.txt -vV -o outputfile.raw -s .558 .558 0.89 -t 0xF2
 
 // The only thing to do to define the yaap namespace
 #include "yaap.h"
