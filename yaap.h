@@ -70,34 +70,34 @@ public:
         return(this->state);
     };
 
-   //! Set the requirement level (required is true, optional is false)
-   void SetRequired( bool r ){
-         this->required = r;
-  };
+    //! Set the requirement level (required is true, optional is false)
+    void SetRequired( bool r ) {
+        this->required = r;
+    };
 
-   //! Set the error flag to true
-   void RaiseError( ){
-      this->error =true;
-   };
-   
-   //! Get the error state
-   bool ErrorFlag(){
-      return( this->error );
-   };
+    //! Set the error flag to true
+    void RaiseError( ) {
+        this->error =true;
+    };
 
-   bool IsRequired( ){
-         return( this->required );
-   };
+    //! Get the error state
+    bool ErrorFlag() {
+        return( this->error );
+    };
 
-   //! Print how to use the option in the command line format
-   virtual void CLUsage( )
-   {
-      std::cout << " [-" << this->Flag() << "]";
-   };
+    bool IsRequired( ) {
+        return( this->required );
+    };
 
-   std::string GetDescription( ){
-           return( this->description );
-   };
+    //! Print how to use the option in the command line format
+    virtual void CLUsage( )
+    {
+        std::cout << " [-" << this->Flag() << "]";
+    };
+
+    std::string GetDescription( ) {
+        return( this->description );
+    };
 
 protected:
     char flag; //!< Command line flag character
@@ -131,22 +131,22 @@ public:
         return( argVector[pos] );
     };
 
-   //! Convenience function for 1-subarg argument
-   T GetValue( ){
-      return( argVector[0] );
-   };
+    //! Convenience function for 1-subarg argument
+    T GetValue( ) {
+        return( argVector[0] );
+    };
 
-   //! Print how to use the option in the command line format
-   virtual void CLUsage( )
-   {
-      std::cout << " [-" << this->Flag();
-      if( this->nbArgs == yaap::undef )
-         std::cout << " x1 x2 ...";
-      else
-         for( unsigned int i = 0; i < nbArgs; i++ )
-            std::cout << " x";
-      std::cout << "]"; 
-   };
+    //! Print how to use the option in the command line format
+    virtual void CLUsage( )
+    {
+        std::cout << " [-" << this->Flag();
+        if( this->nbArgs == yaap::undef )
+            std::cout << " x1 x2 ...";
+        else
+            for( unsigned int i = 0; i < nbArgs; i++ )
+                std::cout << " x";
+        std::cout << "]";
+    };
 
 protected:
     unsigned int nbArgs; //!< Number of arguments of this specific option
@@ -157,29 +157,29 @@ protected:
 template<typename T>
 void OptionArg<T>::AddArgument( std::istringstream& streamArg )
 {
-   T arg;
-   streamArg >> arg;
-   if( streamArg.fail()) 
-   {
-      this->RaiseError();
-   }
+    T arg;
+    streamArg >> arg;
+    if( streamArg.fail())
+    {
+        this->RaiseError();
+    }
 
-   this->argVector.push_back( arg );
+    this->argVector.push_back( arg );
 }
 
 //! Template specialization of SetArgument - istd::string definition
 template<>
 void OptionArg<std::string>::AddArgument( std::istringstream& streamArg )
 {
-   std::string arg;                  
-   std::getline(streamArg, arg);
-       
-   if( streamArg.fail())
-   {
-      this->RaiseError();
-   }
+    std::string arg;
+    std::getline(streamArg, arg);
 
-   this->argVector.push_back( arg );
+    if( streamArg.fail())
+    {
+        this->RaiseError();
+    }
+
+    this->argVector.push_back( arg );
 }
 
 //! Template specialization of SetArgument - unsigned int definition
@@ -187,30 +187,30 @@ void OptionArg<std::string>::AddArgument( std::istringstream& streamArg )
 template<>
 void OptionArg<unsigned int>::AddArgument( std::istringstream& streamArg )
 {
-   std::string stringArg;
-   streamArg >> stringArg;
+    std::string stringArg;
+    streamArg >> stringArg;
 
-   bool hexa = false;
-   if( stringArg.find("0x") == 0 ) // hexa prefix has been found at first position
-   {
-      hexa = true;
-      stringArg = stringArg.substr(2);
-   }
+    bool hexa = false;
+    if( stringArg.find("0x") == 0 ) // hexa prefix has been found at first position
+    {
+        hexa = true;
+        stringArg = stringArg.substr(2);
+    }
 
-   std::istringstream newStream( stringArg ); // new stream with argument without prefix (if any)
-   
-   unsigned int arg;
-   if( hexa == true )
-      newStream >> std::hex >> arg;
-   else
-      newStream >> arg;
+    std::istringstream newStream( stringArg ); // new stream with argument without prefix (if any)
 
-   if( streamArg.fail())
-   {
-      this->RaiseError();
-   }
+    unsigned int arg;
+    if( hexa == true )
+        newStream >> std::hex >> arg;
+    else
+        newStream >> arg;
 
-   this->argVector.push_back( arg );
+    if( streamArg.fail())
+    {
+        this->RaiseError();
+    }
+
+    this->argVector.push_back( arg );
 }
 
 
@@ -232,6 +232,7 @@ public:
     virtual ~Parser()
     {
         // todo: delete options
+        
     };
 
     //! Add a simple option with given flag and description to the options
@@ -261,8 +262,8 @@ public:
         // if required but not found, raise an error
         if( !option->Exists() && required )
         {
-           option->RaiseError( );
-           this->error = true;
+            option->RaiseError( );
+            this->error = true;
         }
         // Return the created Option for the user to use it in the main program
         return( option );
@@ -278,7 +279,7 @@ public:
         // option allocation
         OptionArg<T>* option = new OptionArg<T>( flag, description, nbsubargs );
         option->SetRequired( required);
-  
+
         // parse the argument list
         for( unsigned int i = 1; i < this->nbArgs; i++ )
         {
@@ -290,18 +291,18 @@ public:
                     option->Exists(true);
                     if( i + nbsubargs >= this->nbArgs )
                     {
-                       option->RaiseError();
-                       this->error = true;
+                        option->RaiseError();
+                        this->error = true;
                     }
                     else
-                       for( unsigned int argIdx = 1; argIdx <= nbsubargs ; argIdx++)
-                       {
-                           // For each sub-argument, memorize the command line value in
-                           // the OptionArg object
-                           std::istringstream argStream( argv[i+argIdx] );
-                           option->AddArgument( argStream );
-                           this->error = option->ErrorFlag();
-                       }
+                        for( unsigned int argIdx = 1; argIdx <= nbsubargs ; argIdx++)
+                        {
+                            // For each sub-argument, memorize the command line value in
+                            // the OptionArg object
+                            std::istringstream argStream( argv[i+argIdx] );
+                            option->AddArgument( argStream );
+                            this->error = option->ErrorFlag();
+                        }
                 }
             }
         }
@@ -310,46 +311,50 @@ public:
         // if required but not found, raise an error
         if( !option->Exists() && required )
         {
-           this->error = true;
-           option->RaiseError();
+            this->error = true;
+            option->RaiseError();
         }
         // Return the created Option for the user to use it in the main program
         return( option );
     };
 
-   void Usage( )
-   {
-      std::cout <<std::endl<< "Utility " << this->argv[0] << " :" << std::endl;
-      std::cout << std::endl<<this->description << std::endl;
-      std::cout << std::endl<<"Usage: \n [shell]$ " << this->argv[0];
-      for( unsigned int i = 0; i < optionVector.size(); i++ )
-         optionVector[i]->CLUsage();
-      std::cout << std::endl;
+    void Usage( )
+    {
+        std::cout <<std::endl<< "Utility " << this->argv[0] << " :" << std::endl;
+        std::cout << std::endl<<this->description << std::endl;
+        std::cout << std::endl<<"Usage: \n [shell]$ " << this->argv[0];
+        for( unsigned int i = 0; i < optionVector.size(); i++ )
+            optionVector[i]->CLUsage();
+        std::cout << std::endl;
 
-      for( unsigned int i = 0; i < optionVector.size(); i++ )
-      {
-         std::string requirement;
-         if( optionVector[i]->IsRequired( ))
-            requirement = "Required";
-         else
-            requirement = "Optional";
+        for( unsigned int i = 0; i < optionVector.size(); i++ )
+        {
+            std::string requirement;
+            if( optionVector[i]->IsRequired( ))
+                requirement = "Required";
+            else
+                requirement = "Optional";
 
-         if( optionVector[i]->ErrorFlag() )
-            std::cout << "     *\t";
-         else
-            std::cout << "\t";
-         std::cout << "-" << optionVector[i]->Flag() 
-                   << " : " << optionVector[i]->GetDescription() 
-                   << " ("<<requirement<<")."<<std::endl;
-      }
-      std::cout << "* indicate(s) wrong argument(s)."<< std::endl;
-   };
+            if( optionVector[i]->ErrorFlag() )
+                std::cout << "     *\t";
+            else
+                std::cout << "\t";
+            std::cout << "-" << optionVector[i]->Flag()
+                      << " : " << optionVector[i]->GetDescription()
+                      << " ("<<requirement<<")."<<std::endl;
+        }
+        std::cout << "* indicate(s) wrong argument(s)."<< std::endl;
+    };
 
-   bool IsCommandLineValid( )
-   { return( !this->error );};
+    bool IsCommandLineValid( )
+    {
+        return( !this->error );
+    };
 
-   void SetDescription( std::string desc )
-   { this->description = desc; };
+    void SetDescription( std::string desc )
+    {
+        this->description = desc;
+    };
 
 private:
     unsigned int nbArgs; //!< Number of arguments (argc)
