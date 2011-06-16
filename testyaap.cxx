@@ -16,15 +16,15 @@ int main( int argc, char** argv )
    yaap::Parser parser( argc, argv,"Test the Argument Parser \'yaap\'. It simply displays the following option as\nentered in the command line." );
    
    // Add an option of type "-i filename"
-   yaap::OptionArg<std::string,1>* inputOpt = parser.AddOptionArg<std::string,1>( 'i', "Input file (.vti)",true);
+   yaap::OptionArg<std::string>* inputOpt = parser.AddOptionArg<std::string>( 'i', "Input file (.vti)",1,true);
    // Add an option of type "-e 0 127 0 127 0 127"
-   yaap::OptionArg<int,6>* extentOpt = parser.AddOptionArg<int,6>( 'e', "Extent (dimension): xmin xmax ymin ymax zmin zmax (integer)");
+   yaap::OptionArg<int>* extentOpt = parser.AddOptionArg<int>( 'e', "Extent (dimension): xmin xmax ymin ymax zmin zmax (integer)",6);
    // Add an option of type "-s 0.588 0.588 0.877"
-   yaap::OptionArg<double,3>* spacingOpt = parser.AddOptionArg<double,3>( 's', "Spacing (size of pixel): x y z (double)",true);
+   yaap::OptionArg<double>* spacingOpt = parser.AddOptionArg<double>( 's', "Spacing (size of pixel): x y z (double)",3,true);
    // Add an option of type "-o filename"
-   yaap::OptionArg<std::string,1>* outputOpt = parser.AddOptionArg<std::string,1>( 'o', "Output file (.vti)",true);
+   yaap::OptionArg<std::string>* outputOpt = parser.AddOptionArg<std::string>( 'o', "Output file (.vti)",1,true);
    // Add an option "-t tag" where tag is a uint, possibly hexa.
-   yaap::OptionArg<unsigned int,1>* tagOpt = parser.AddOptionArg<unsigned int,1>( 't', "UINT Tag. Can be hexa (prefix with 0x)",true);
+   yaap::OptionArg<unsigned int>* tagOpt = parser.AddOptionArg<unsigned int>( 't', "UINT Tag. Can be hexa (prefix with 0x)",1,true);
    // Add a simple option for ie. debugging information
    yaap::Option* verboseOpt = parser.AddOption('v', "Verbose output");
    // Add a simple option for ie. version display

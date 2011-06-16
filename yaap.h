@@ -37,6 +37,8 @@
 //! \namespace yaap contains the classes for command line arguments parsing
 namespace yaap {
 
+const int undef = -1;
+
 //! \class Option
 //! \brief Defines a boolean option
 //!
@@ -111,21 +113,21 @@ protected:
 //! This is a templated class derived from Option. It adds a vector of
 //! arguments which type and number is defined by the template statements T
 //! and N.
-template<typename T, unsigned int N>
+template<typename T>
 class OptionArg : public Option {
 
 public:
     //! constructor
-    OptionArg( char flag, std::string description ):Option(flag,description)
+    OptionArg( char flag, std::string description, unsigned int nbargs = yaap::undef ):Option(flag,description)
     {
-        this->nbArgs = N;
+        this->nbArgs = nbargs;
     };
 
-    //! Set the pos-th arg of type T.
-    void SetArgument( std::istringstream& streamArg, int pos );
+    //! Add an argument at the end of the arg list
+    void AddArgument( std::istringstream& streamArg );
 
     //! Get the pos-th arg of type T
-    T GetArgument( int pos ) {
+    T GetArgument( unsigned int pos ) {
         return( argVector[pos] );
     };
 
@@ -138,19 +140,22 @@ public:
    virtual void CLUsage( )
    {
       std::cout << " [-" << this->Flag();
-      for( unsigned int i = 0; i < nbArgs; i++ )
-         std::cout << " x";
+      if( this->nbArgs == yaap::undef )
+         std::cout << " x1 x2 ...";
+      else
+         for( unsigned int i = 0; i < nbArgs; i++ )
+            std::cout << " x";
       std::cout << "]"; 
    };
 
 protected:
     unsigned int nbArgs; //!< Number of arguments of this specific option
-    T argVector[N]; //!< Vector of arguments of type T
+    std::vector<T> argVector; //!< Vector of arguments of type T
 };
 
 //! Template specialization of SetArgument - general definition
-template<typename T, unsigned int N>
-void OptionArg<T,N>::SetArgument( std::istringstream& streamArg, int pos )
+template<typename T>
+void OptionArg<T>::AddArgument( std::istringstream& streamArg )
 {
    T arg;
    streamArg >> arg;
@@ -159,12 +164,12 @@ void OptionArg<T,N>::SetArgument( std::istringstream& streamArg, int pos )
       this->RaiseError();
    }
 
-   this->argVector[pos] = arg;
+   this->argVector.push_back( arg );
 }
 
 //! Template specialization of SetArgument - istd::string definition
 template<>
-void OptionArg<std::string,1>::SetArgument( std::istringstream& streamArg, int pos )
+void OptionArg<std::string>::AddArgument( std::istringstream& streamArg )
 {
    std::string arg;                  
    std::getline(streamArg, arg);
@@ -174,13 +179,13 @@ void OptionArg<std::string,1>::SetArgument( std::istringstream& streamArg, int p
       this->RaiseError();
    }
 
-   this->argVector[pos] = arg;
+   this->argVector.push_back( arg );
 }
 
 //! Template specialization of SetArgument - unsigned int definition
 //! Uint data should be passed as hexadecimal, prefix '0x'
 template<>
-void OptionArg<unsigned int,1>::SetArgument( std::istringstream& streamArg, int pos )
+void OptionArg<unsigned int>::AddArgument( std::istringstream& streamArg )
 {
    std::string stringArg;
    streamArg >> stringArg;
@@ -205,7 +210,7 @@ void OptionArg<unsigned int,1>::SetArgument( std::istringstream& streamArg, int 
       this->RaiseError();
    }
 
-   this->argVector[pos] = arg;
+   this->argVector.push_back( arg );
 }
 
 
@@ -267,11 +272,11 @@ public:
     //! options vector, check its existence and perform the sub-arguments
     //! assignment. There are N sub-arguments of type T.
     //! \return the instanciated OptionArg
-    template<class T, unsigned int N>
-    OptionArg<T,N>* AddOptionArg( char flag, std::string description, bool required = false )
+    template<class T>
+    OptionArg<T>* AddOptionArg( char flag, std::string description, unsigned int nbsubargs, bool required = false )
     {
         // option allocation
-        OptionArg<T,N>* option = new OptionArg<T,N>( flag, description );
+        OptionArg<T>* option = new OptionArg<T>( flag, description, nbsubargs );
         option->SetRequired( required);
   
         // parse the argument list
@@ -283,18 +288,18 @@ public:
                 {
                     // toggle the state of the option to true
                     option->Exists(true);
-                    if( i + N >= this->nbArgs )
+                    if( i + nbsubargs >= this->nbArgs )
                     {
                        option->RaiseError();
                        this->error = true;
                     }
                     else
-                       for( unsigned int argIdx = 1; argIdx <= N ; argIdx++)
+                       for( unsigned int argIdx = 1; argIdx <= nbsubargs ; argIdx++)
                        {
                            // For each sub-argument, memorize the command line value in
                            // the OptionArg object
                            std::istringstream argStream( argv[i+argIdx] );
-                           option->SetArgument( argStream, argIdx-1 );
+                           option->AddArgument( argStream );
                            this->error = option->ErrorFlag();
                        }
                 }
