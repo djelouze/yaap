@@ -177,6 +177,39 @@ void OptionArg<std::string,1>::SetArgument( std::istringstream& streamArg, int p
    this->argVector[pos] = arg;
 }
 
+//! Template specialization of SetArgument - unsigned int definition
+//! Uint data should be passed as hexadecimal, prefix '0x'
+template<>
+void OptionArg<unsigned int,1>::SetArgument( std::istringstream& streamArg, int pos )
+{
+   std::string stringArg;
+   streamArg >> stringArg;
+
+   bool hexa = false;
+   if( stringArg.find("0x") == 0 ) // hexa prefix has been found at first position
+   {
+      hexa = true;
+      stringArg = stringArg.substr(2);
+   }
+
+   std::istringstream newStream( stringArg ); // new stream with argument without prefix (if any)
+   
+   unsigned int arg;
+   if( hexa == true )
+      newStream >> std::hex >> arg;
+   else
+      newStream >> arg;
+
+   if( streamArg.fail())
+   {
+      this->RaiseError();
+   }
+
+   this->argVector[pos] = arg;
+}
+
+
+
 //! \class Parser
 //! \brief Manages a set of options
 class Parser {
