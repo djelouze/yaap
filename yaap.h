@@ -205,7 +205,7 @@ void OptionArg<unsigned int>::AddArgument( std::istringstream& streamArg )
     else
         newStream >> arg;
 
-    if( streamArg.fail())
+    if( newStream.fail())
     {
         this->RaiseError();
     }
@@ -276,7 +276,7 @@ public:
 
     //! Add an option with arguments with given flag and description to the
     //! options vector, check its existence and perform the sub-arguments
-    //! assignment. There are N sub-arguments of type T.
+    //! assignment. There are nsubargs of type T.
     //! \return the instanciated OptionArg
     template<class T>
     OptionArg<T>* AddOptionArg( char flag, std::string description, unsigned int nbsubargs, bool required = false )
@@ -306,7 +306,8 @@ public:
                             // the OptionArg object
                             std::istringstream argStream( argv[i+argIdx] );
                             option->AddArgument( argStream );
-                            this->error = option->ErrorFlag();
+                            if( option->ErrorFlag() )
+                                this->error = true;
                         }
                 }
             }
