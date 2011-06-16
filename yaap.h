@@ -232,7 +232,12 @@ public:
     virtual ~Parser()
     {
         // todo: delete options
-        
+        std::vector<Option*>::iterator optionIterator = this->optionVector.begin(); 
+        while( optionIterator != this->optionVector.end() )
+        {
+            delete *optionIterator;
+            optionIterator++;
+        }
     };
 
     //! Add a simple option with given flag and description to the options
