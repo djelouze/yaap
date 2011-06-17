@@ -39,6 +39,27 @@ namespace yaap {
 
 const int undef = 0;
 
+class OperandBase{
+public:
+    OperandBase( ){};
+    virtual ~OperandBase(){};
+};    
+
+template<typename T>
+class Operand : public OperandBase{
+public:
+    Operand( const T& val ){
+        this->value = val;
+    };
+
+    T GetValue( ){
+        return( this->value );
+    };
+
+private:
+    T value;
+};
+
 //! \class Option
 //! \brief Defines a boolean option
 //!
@@ -214,7 +235,6 @@ void OptionArg<unsigned int>::AddArgument( std::istringstream& streamArg )
 }
 
 
-
 //! \class Parser
 //! \brief Manages a set of options
 class Parser {
@@ -324,6 +344,10 @@ public:
         return( option );
     };
 
+    void AddOperand( OperandBase* op ){
+        this->operandVector.push_back( op );
+    };
+
     void Usage( )
     {
         std::cout <<std::endl<< "Utility " << this->argv[0] << " :" << std::endl;
@@ -379,6 +403,7 @@ private:
     unsigned int nbArgs; //!< Number of arguments (argc)
     char** argv; //!< Arguments' vector
     std::vector<Option*> optionVector; //!< vector of options
+    std::vector<OperandBase*> operandVector; //!< vector of options
     bool error; //!< raised to 1 when one of the arguments in the command line is not valid
     std::string description; //!< give a general description of the command.
 };
