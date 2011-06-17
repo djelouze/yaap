@@ -263,7 +263,7 @@ public:
             }
         }
         // Put the Option in the options' array.
-        this->optionVector.push_back( option );
+        this->PushOption( option );
         // if required but not found, raise an error
         if( !option->Exists() && required )
         {
@@ -313,7 +313,7 @@ public:
             }
         }
         // Put the Option in the options' array.
-        this->optionVector.push_back( option );
+        this->PushOption( option );
         // if required but not found, raise an error
         if( !option->Exists() && required )
         {
@@ -363,6 +363,19 @@ public:
     };
 
 private:
+    void PushOption( Option* option ){
+        this->optionVector.push_back( option );
+        if( // Reserved POSIX flags
+            option->Flag() == 'W'
+         || option->Flag() == '-'
+          ) 
+        {
+            option->RaiseError( );
+            this->error = true;
+        }
+    };
+
+
     unsigned int nbArgs; //!< Number of arguments (argc)
     char** argv; //!< Arguments' vector
     std::vector<Option*> optionVector; //!< vector of options
