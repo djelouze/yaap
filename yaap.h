@@ -37,7 +37,7 @@
 //! \namespace yaap contains the classes for command line arguments parsing
 namespace yaap {
 
-const int undef = -1;
+const int undef = 0;
 
 //! \class Option
 //! \brief Defines a boolean option
