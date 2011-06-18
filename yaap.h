@@ -39,27 +39,6 @@ namespace yaap {
 
 const int undef = 0;
 
-class OperandBase{
-public:
-    OperandBase( ){};
-    virtual ~OperandBase(){};
-};    
-
-template<typename T>
-class Operand : public OperandBase{
-public:
-    Operand( const T& val ){
-        this->value = val;
-    };
-
-    T GetValue( ){
-        return( this->value );
-    };
-
-private:
-    T value;
-};
-
 //! \class Option
 //! \brief Defines a boolean option
 //!
@@ -233,6 +212,42 @@ void OptionArg<unsigned int>::AddArgument( std::istringstream& streamArg )
 
     this->argVector.push_back( arg );
 }
+
+//! \class OperandBase
+//! \brief define a command line operand
+//! 
+//! This is a bare base class intended to be used as std::vector element. 
+//! \see Operand<T>
+class OperandBase{
+public:
+    OperandBase( const std::string& description){
+        this->description = description;
+    };
+    virtual ~OperandBase(){};
+private:
+    std::string description; //!< short description of the operand's role
+};    
+
+//! \class Operand
+//! \brief Implement a defined type for a command line operand
+template<typename T>
+class Operand : public OperandBase{
+public:
+    Operand( const std::string& description ):OperandBase( description ){
+    };
+
+    void SetValue( const T& val ){
+        this->value = val;
+    }
+
+    T GetValue( ){
+        return( this->value );
+    };
+
+private:
+    T value;
+};
+
 
 
 //! \class Parser
