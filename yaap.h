@@ -236,9 +236,8 @@ public:
     Operand( const std::string& description ):OperandBase( description ){
     };
 
-    void SetValue( const T& val ){
-        this->value = val;
-    }
+    void SetValue( std::istringstream& valStream );
+    
 
     T GetValue( ){
         return( this->value );
@@ -248,8 +247,19 @@ private:
     T value;
 };
 
+//! Template specialization for string operand (white space hack)
+template<typename T>
+void Operand<T>::SetValue( std::istringstream& valStream )
+{
+    valStream >> this->value;
+}
 
-
+//! Template specialization for string operand (white space hack)
+template<>
+void Operand<std::string>::SetValue( std::istringstream& valStream )
+{
+    std::getline( valStream, this->value );
+}
 //! \class Parser
 //! \brief Manages a set of options
 class Parser {
