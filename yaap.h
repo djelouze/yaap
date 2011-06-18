@@ -359,8 +359,16 @@ public:
         return( option );
     };
 
-    void AddOperand( OperandBase* op ){
+    template<typename T>
+    Operand<T>* AddOperand( std::string description ){
+        Operand<T>* op = new Operand<T>(description);
+        op->SetValue( description );
         this->operandVector.push_back( op );
+        return( op );
+    };
+
+    OperandBase* GetOperand( unsigned int pos ){
+        return( this->operandVector[pos] );
     };
 
     void Usage( )
