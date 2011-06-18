@@ -67,7 +67,7 @@ Guideline 7: # Yaap is compliant #
     Option-arguments should not be optional.
 Guideline 8: # Yaap is not compliant : multiple option-arguments are represented as multiple command line arguments #
     When multiple option-arguments are specified to follow a single option, they should be presented as a single argument, using <comma> characters within that argument or <blank> characters within that argument to separate them.
-Guideline 9: # Yaap does not implement operands parsing #
+Guideline 9: # Yaap is compliant if the '--' is used and allows operand for preceding options #
     All options should precede operands on the command line.
 Guideline 10: # Yaap is compliant #
     The first -- argument that is not an option-argument should be accepted as a delimiter indicating the end of options. Any following arguments should be treated as operands, even if they begin with the '-' character.
