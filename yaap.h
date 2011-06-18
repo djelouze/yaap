@@ -261,6 +261,18 @@ public:
         this->argv = argv;
         this->error = false;
         this->description = description;
+  
+        this->operandOffset = 1; // Case with no option
+        // find the first possible operand (use of "--" flag)
+        for( int argId = 0; argId < argc; argId++ )
+        {
+            if( argv[argId][0] == '-' )
+                if( argv[argId][1] == '-' )
+                    if( argv[argId][2] == '\0' )
+                    {
+                        this->operandOffset = argId+1;
+                    }
+        }
     };
 
     //! destructor
@@ -427,6 +439,7 @@ private:
     char** argv; //!< Arguments' vector
     std::vector<Option*> optionVector; //!< vector of options
     std::vector<OperandBase*> operandVector; //!< vector of options
+    unsigned int operandOffset; //!< index in argv of the first operand
     bool error; //!< raised to 1 when one of the arguments in the command line is not valid
     std::string description; //!< give a general description of the command.
 };
