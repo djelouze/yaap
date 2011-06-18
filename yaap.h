@@ -383,9 +383,22 @@ public:
 
     template<typename T>
     Operand<T>* AddOperand( std::string description ){
+
         Operand<T>* op = new Operand<T>(description);
-        op->SetValue( description );
+
+        if( this->operandOffset >= this->nbArgs )
+        {
+            this->error = true;
+            std::istringstream nullStream( "0" );
+            op->SetValue( nullStream );
+        }
+        else
+        {
+            std::istringstream opStream( this->argv[this->operandOffset] );
+            op->SetValue( opStream );
+        }
         this->operandVector.push_back( op );
+        this->operandOffset++;
         return( op );
     };
 
