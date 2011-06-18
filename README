@@ -69,14 +69,14 @@ Guideline 8: # Yaap is not compliant : multiple option-arguments are represented
     When multiple option-arguments are specified to follow a single option, they should be presented as a single argument, using <comma> characters within that argument or <blank> characters within that argument to separate them.
 Guideline 9: # Yaap does not implement operands parsing #
     All options should precede operands on the command line.
-Guideline 10: # Yaap does not implement end-of-options delimiter #
+Guideline 10: # Yaap is compliant #
     The first -- argument that is not an option-argument should be accepted as a delimiter indicating the end of options. Any following arguments should be treated as operands, even if they begin with the '-' character.
 Guideline 11: # Yaap allows unordered options, but does not implement repeated and mutual exclusive options behaviour #
     The order of different options relative to one another should not matter, unless the options are documented as mutually-exclusive and such an option is documented to override any incompatible options preceding it. If an option that has option-arguments is repeated, the option and option-argument combinations should be interpreted in the order specified on the command line.
-Guideline 12: # Yaap does not implement operands parsing #
+Guideline 12: # Yaap is compliant #
     The order of operands may matter and position-related interpretations should be determined on a utility-specific basis.
-Guideline 13: # Yaap does not implement operands parsing #
+Guideline 13: # Not a Yaap matter #
     For utilities that use operands to represent files to be opened for either reading or writing, the '-' operand should be used to mean only standard input (or standard output when it is clear from context that an output file is being specified) or a file named -.
-Guideline 14: # Yaap is not compliant
+Guideline 14: # Yaap is not compliant #
     If an argument can be identified according to Guidelines 3 through 10 as an option, or as a group of options without option-arguments behind one '-' delimiter, then it should be treated as such. 
 

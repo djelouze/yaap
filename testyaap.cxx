@@ -32,6 +32,9 @@ int main( int argc, char** argv )
     // Add a simple option for usage display
     yaap::Option* helpOpt = parser.AddOption('h', "Display a brief help");
 
+    yaap::Operand<std::string>* op1 = parser.AddOperand<std::string>("test operand1");
+    yaap::Operand<int>* op2 = parser.AddOperand<int>("test operand2");
+
 
 //////////////// NOW THE OPTIONS ARE DEFINED. JUST USE THEM //////
 
@@ -88,5 +91,7 @@ int main( int argc, char** argv )
     else
         std::cout << "n/a" << std::endl;
 
+    std::cout << op1->GetValue( ) << std::endl;
+    std::cout << op2->GetValue( )+2 << std::endl;
     return ( 1 );
 }
