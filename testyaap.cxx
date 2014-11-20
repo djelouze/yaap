@@ -35,7 +35,7 @@ int main( int argc, char** argv )
                                                     1,true);
   // Add an option "-t tag" where tag is a uint, possibly hexa.
   yaap::OptionArg<unsigned int>* tagOpt;
- tagOpt = parser.AddOptionArg<unsigned int>( 't', "UINT Tag. Can be hexa\
+  tagOpt = parser.AddOptionArg<unsigned int>( 't', "UINT Tag. Can be hexa\
                                                      (prefix with 0x)",1,true);
   // Add a simple option for ie. debugging information
   yaap::Option* verboseOpt = parser.AddOption('v', "Verbose output");
