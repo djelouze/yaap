@@ -12,86 +12,110 @@ int main( int argc, char** argv )
 {
 
 ////////////////// OPTION LAYOUT DEFINITION /////////////////////
-    // Initialize a parser following the command line argument
-    yaap::Parser parser( argc, argv,"Test the Argument Parser \'yaap\'. It simply displays the following option as\nentered in the command line." );
+  // Initialize a parser following the command line argument
+  yaap::Parser parser( argc, argv,"Test the Argument Parser \'yaap\'. It \
+    simply displays the following option as\nentered in the command line." );
 
-    // Add an option of type "-i filename"
-    yaap::OptionArg<std::string>* inputOpt = parser.AddOptionArg<std::string>( 'i', "Input file (.vti)",1,true);
-    // Add an option of type "-e 0 127 0 127 0 127"
-    yaap::OptionArg<int>* extentOpt = parser.AddOptionArg<int>( 'e', "Extent (dimension): xmin xmax ymin ymax zmin zmax (integer)",6);
-    // Add an option of type "-s 0.588 0.588 0.877"
-    yaap::OptionArg<double>* spacingOpt = parser.AddOptionArg<double>( 's', "Spacing (size of pixel): x y z (double)",3,true);
-    // Add an option of type "-o filename"
-    yaap::OptionArg<std::string>* outputOpt = parser.AddOptionArg<std::string>( 'o', "Output file (.vti)",1,true);
-    // Add an option "-t tag" where tag is a uint, possibly hexa.
-    yaap::OptionArg<unsigned int>* tagOpt = parser.AddOptionArg<unsigned int>( 't', "UINT Tag. Can be hexa (prefix with 0x)",1,true);
-    // Add a simple option for ie. debugging information
-    yaap::Option* verboseOpt = parser.AddOption('v', "Verbose output");
-    // Add a simple option for ie. version display
-    yaap::Option* versionOpt = parser.AddOption('V', "Display version");
-    // Add a simple option for usage display
-    yaap::Option* helpOpt = parser.AddOption('h', "Display a brief help");
+  // Add an option of type "-i filename"
+  yaap::OptionArg<std::string>* inputOpt;
+  inputOpt = parser.AddOptionArg<std::string>( 'i', "Input file (.vti)",
+                                                 1,true);
+  // Add an option of type "-e 0 127 0 127 0 127"
+  yaap::OptionArg<int>* extentOpt;
+  extentOpt = parser.AddOptionArg<int>( 'e', "Extent (dimension): \
+                                              xmin xmax ymin ymax zmin zmax\
+                                              (integer)",6);
+  // Add an option of type "-s 0.588 0.588 0.877"
+  yaap::OptionArg<double>* spacingOpt;
+  spacingOpt = parser.AddOptionArg<double>( 's', "Spacing (size of pixel):\
+                                                    x y z (double)",3,true);
+  // Add an option of type "-o filename"
+  yaap::OptionArg<std::string>* outputOpt;
+  outputOpt = parser.AddOptionArg<std::string>( 'o', "Output file (.vti)",
+                                                    1,true);
+  // Add an option "-t tag" where tag is a uint, possibly hexa.
+  yaap::OptionArg<unsigned int>* tagOpt;
+ tagOpt = parser.AddOptionArg<unsigned int>( 't', "UINT Tag. Can be hexa\
+                                                     (prefix with 0x)",1,true);
+  // Add a simple option for ie. debugging information
+  yaap::Option* verboseOpt = parser.AddOption('v', "Verbose output");
+  // Add a simple option for ie. version display
+  yaap::Option* versionOpt = parser.AddOption('V', "Display version");
+  // Add a simple option for usage display
+  yaap::Option* helpOpt = parser.AddOption('h', "Display a brief help");
 
-    yaap::Operand<std::string>* op1 = parser.AddOperand<std::string>("test operand1");
-    yaap::Operand<int>* op2 = parser.AddOperand<int>("test operand2");
+  yaap::Operand<std::string>* op1;
+  op1 = parser.AddOperand<std::string>("test operand1");
+  yaap::Operand<int>* op2;
+  op2 = parser.AddOperand<int>("test operand2");
 
 
 //////////////// NOW THE OPTIONS ARE DEFINED. JUST USE THEM //////
 
-    if( !parser.IsCommandLineValid( ) || helpOpt->Exists() || argc ==  1)
+  if( !parser.IsCommandLineValid( ) || helpOpt->Exists() || argc ==  1)
+  {
+    parser.Usage( );
+    return( 0 );
+  }
+
+  // Check verbose option
+  std::cout << "Verbose? ";
+  (verboseOpt->Exists())? std::cout << "Yes": std::cout << "No";
+  std::cout << std::endl;
+
+  // Check version option
+  std::cout << "Version? ";
+  (versionOpt->Exists())? std::cout << "Yes": std::cout << "No";
+  std::cout << std::endl;
+
+  // Check input filename option
+  std::cout << "Input filename: ";
+  (inputOpt->Exists())? std::cout << inputOpt->GetValue(): std::cout << "n/a";
+  std::cout << std::endl;
+
+  // Check output filename option
+  std::cout << "Output filename: ";
+  (outputOpt->Exists())? std::cout << outputOpt->GetValue(): std::cout 
+                                   << "n/a";
+  std::cout << std::endl;
+
+  // Check tag option
+  std::cout << "Tag: ";
+  (tagOpt->Exists())? std::cout << tagOpt->GetValue(): std::cout << "n/a";
+  std::cout << std::endl;
+
+  // Check extent option
+  std::cout << "Extent: ";
+  if(extentOpt->Exists())
+  {
+    for( int i = 0; i < 5; i++ )
     {
-        parser.Usage( );
-        return( 0 );
+        std::cout << extentOpt->GetArgument(i) << " ; ";
     }
+    std::cout << extentOpt->GetArgument(5) << std::endl;
+  }
+  else
+  {
+    std::cout << "n/a" << std::endl;
+  }
 
-    // Check verbose option
-    std::cout << "Verbose? ";
-    (verboseOpt->Exists())? std::cout << "Yes": std::cout << "No";
-    std::cout << std::endl;
-
-    // Check version option
-    std::cout << "Version? ";
-    (versionOpt->Exists())? std::cout << "Yes": std::cout << "No";
-    std::cout << std::endl;
-
-    // Check input filename option
-    std::cout << "Input filename: ";
-    (inputOpt->Exists())? std::cout << inputOpt->GetValue(): std::cout << "n/a";
-    std::cout << std::endl;
-
-    // Check output filename option
-    std::cout << "Output filename: ";
-    (outputOpt->Exists())? std::cout << outputOpt->GetValue(): std::cout << "n/a";
-    std::cout << std::endl;
-
-    // Check tag option
-    std::cout << "Tag: ";
-    (tagOpt->Exists())? std::cout << tagOpt->GetValue(): std::cout << "n/a";
-    std::cout << std::endl;
-
-    // Check extent option
-    std::cout << "Extent: ";
-    if(extentOpt->Exists())
+  // Check spacing option
+  std::cout << "Spacing: ";
+  if(spacingOpt->Exists())
+  {
+    for( int i = 0; i < 2; i++ )
     {
-        for( int i = 0; i < 5; i++ )
-            std::cout << extentOpt->GetArgument(i) << " ; ";
-        std::cout << extentOpt->GetArgument(5) << std::endl;
+      std::cout << spacingOpt->GetArgument(i) << " ; ";
     }
-    else
-        std::cout << "n/a" << std::endl;
+    std::cout << spacingOpt->GetArgument(2) << std::endl;
+  }
+  else
+  {
+    std::cout << "n/a" << std::endl;
+  }
 
-    // Check spacing option
-    std::cout << "Spacing: ";
-    if(spacingOpt->Exists())
-    {
-        for( int i = 0; i < 2; i++ )
-            std::cout << spacingOpt->GetArgument(i) << " ; ";
-        std::cout << spacingOpt->GetArgument(2) << std::endl;
-    }
-    else
-        std::cout << "n/a" << std::endl;
+  std::cout << op1->GetValue( ) << std::endl;
+  std::cout << op2->GetValue( )+2 << std::endl;
 
-    std::cout << op1->GetValue( ) << std::endl;
-    std::cout << op2->GetValue( )+2 << std::endl;
-    return ( 1 );
+  return ( 1 );
 }
