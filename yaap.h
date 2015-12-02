@@ -148,7 +148,7 @@ public:
     //! Print how to use the option in the command line format
     virtual void CLUsage( )
     {
-        std::cout << " [-" << this->Flag();
+        std::cout << " [-" << this->Flag()<<"/--"<<this->LongName();
         if( this->nbArgs == yaap::undef )
             std::cout << " x1 x2 ...";
         else
@@ -449,6 +449,7 @@ public:
             else
                 std::cout << "\t";
             std::cout << "-" << optionVector[i]->Flag()
+                      << "/--" << optionVector[i]->LongName()
                       << " : " << optionVector[i]->GetDescription()
                       << " ("<<requirement<<")."<<std::endl;
         }
