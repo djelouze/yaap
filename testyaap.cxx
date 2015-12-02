@@ -18,31 +18,31 @@ int main( int argc, char** argv )
 
   // Add an option of type "-i filename"
   yaap::OptionArg<std::string>* inputOpt;
-  inputOpt = parser.AddOptionArg<std::string>( 'i', "Input file (.vti)",
+  inputOpt = parser.AddOptionArg<std::string>( 'i',"inputFile", "Input file (.vti)",
                                                  1,true);
   // Add an option of type "-e 0 127 0 127 0 127"
   yaap::OptionArg<int>* extentOpt;
-  extentOpt = parser.AddOptionArg<int>( 'e', "Extent (dimension): \
+  extentOpt = parser.AddOptionArg<int>( 'e', "extent","Extent (dimension): \
                                               xmin xmax ymin ymax zmin zmax\
                                               (integer)",6);
   // Add an option of type "-s 0.588 0.588 0.877"
   yaap::OptionArg<double>* spacingOpt;
-  spacingOpt = parser.AddOptionArg<double>( 's', "Spacing (size of pixel):\
+  spacingOpt = parser.AddOptionArg<double>( 's',"spacing", "Spacing (size of pixel):\
                                                     x y z (double)",3,true);
   // Add an option of type "-o filename"
   yaap::OptionArg<std::string>* outputOpt;
-  outputOpt = parser.AddOptionArg<std::string>( 'o', "Output file (.vti)",
+  outputOpt = parser.AddOptionArg<std::string>( 'o',"outputFile", "Output file (.vti)",
                                                     1,true);
   // Add an option "-t tag" where tag is a uint, possibly hexa.
   yaap::OptionArg<unsigned int>* tagOpt;
-  tagOpt = parser.AddOptionArg<unsigned int>( 't', "UINT Tag. Can be hexa\
+  tagOpt = parser.AddOptionArg<unsigned int>( 't', "tag", "UINT Tag. Can be hexa\
                                                      (prefix with 0x)",1,true);
   // Add a simple option for ie. debugging information
-  yaap::Option* verboseOpt = parser.AddOption('v', "Verbose output");
+  yaap::Option* verboseOpt = parser.AddOption('v', "verbose", "Verbose output");
   // Add a simple option for ie. version display
-  yaap::Option* versionOpt = parser.AddOption('V', "Display version");
+  yaap::Option* versionOpt = parser.AddOption('V', "display", "Display version");
   // Add a simple option for usage display
-  yaap::Option* helpOpt = parser.AddOption('h', "Display a brief help");
+  yaap::Option* helpOpt = parser.AddOption('h', "help", "Display a brief help");
 
   yaap::Operand<std::string>* op1;
   op1 = parser.AddOperand<std::string>("test operand1");

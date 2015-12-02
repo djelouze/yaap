@@ -48,9 +48,10 @@ const int undef = 0;
 class Option {
 public:
     //! constructor.
-    Option( char flag, std::string description )
+    Option( char flag, std::string longName, std::string description )
     {
         this->flag = flag;
+        this->longName = longName;
         this->description = description;
         this->state = false;
         this->required = false;
@@ -61,10 +62,17 @@ public:
     char Flag( ) {
         return( this->flag);
     };
+
+    //! Get the long name
+    std::string LongName(){
+        return( this->longName );
+    };
+
     //! Set the state (exists or not in the command line)
     void Exists(bool state) {
         this->state = state;
     };
+
     //! Get the state. If true, the option exists in the command line
     bool Exists() {
         return(this->state);
@@ -92,7 +100,7 @@ public:
     //! Print how to use the option in the command line format
     virtual void CLUsage( )
     {
-        std::cout << " [-" << this->Flag() << "]";
+        std::cout << " [-" << this->Flag() << "/--"<<this->LongName()<<"]";
     };
 
     std::string GetDescription( ) {
@@ -101,6 +109,7 @@ public:
 
 protected:
     char flag; //!< Command line flag character
+    std::string longName;//!< Command line long name string
     std::string description;//!< Short description
     bool state;//!< true if present in the command line
     bool required;//!< if true, the absence of the option in the command line will raise an error in the parser.
@@ -118,7 +127,7 @@ class OptionArg : public Option {
 
 public:
     //! constructor
-    OptionArg( char flag, std::string description, unsigned int nbargs = yaap::undef ):Option(flag,description)
+    OptionArg( char flag, std::string longName, std::string description, unsigned int nbargs = yaap::undef ):Option(flag,longName,description)
     {
         this->nbArgs = nbargs;
     };
@@ -144,7 +153,13 @@ public:
             std::cout << " x1 x2 ...";
         else
             for( unsigned int i = 0; i < nbArgs; i++ )
-                std::cout << " x";
+            {
+              std::cout << " x";
+              if( nbArgs > 1)
+              {
+                std::cout << i+1;
+              }
+            }
         std::cout << "]";
     };
 
@@ -300,9 +315,9 @@ public:
     //! Add a simple option with given flag and description to the options
     //! vector and check its existence.
     //! \return the instanciated Option
-    Option* AddOption( char flag, std::string description, bool required = false )
+    Option* AddOption( char flag, std::string longName, std::string description, bool required = false )
     {
-        Option* option = new Option( flag, description );
+        Option* option = new Option( flag, longName, description );
         option->SetRequired( required );
         // For each argument in the command, check the underlying string
         for( unsigned int i = 1; i < this->nbArgs; i++ )
@@ -310,13 +325,17 @@ public:
             if( this->argv[i][0] == '-' ) // This is an option(s) statement
             {
                 // The option flag can be concatenated after a unique '-'
-                unsigned int c = 0;
-                while(argv[i][c] != '\0' )
+                unsigned int c = 1;
+                while(argv[i][c] != '\0' && argv[i][c]!='-')
                 {
                     if( argv[i][c] == option->Flag() ) // It is the processed option
                         option->Exists(true); // toggle the state in the Option object
                     c++;
                 }
+            }
+            if( option->LongName().compare(argv[i]+2) == 0)
+            {
+              option->Exists(true);
             }
         }
         // Put the Option in the options' array.
@@ -336,10 +355,10 @@ public:
     //! assignment. There are nsubargs of type T.
     //! \return the instanciated OptionArg
     template<class T>
-    OptionArg<T>* AddOptionArg( char flag, std::string description, unsigned int nbsubargs, bool required = false )
+    OptionArg<T>* AddOptionArg( char flag, std::string longName, std::string description, unsigned int nbsubargs, bool required = false )
     {
         // option allocation
-        OptionArg<T>* option = new OptionArg<T>( flag, description, nbsubargs );
+        OptionArg<T>* option = new OptionArg<T>( flag, longName, description, nbsubargs );
         option->SetRequired( required);
 
         // parse the argument list
@@ -347,7 +366,9 @@ public:
         {
             if( this->argv[i][0] == '-' ) // This is an option(s) statement
             {
-                if( argv[i][1] == option->Flag() ) // this is the processed option
+                if( argv[i][1] == option->Flag() 
+                  || option->LongName().compare(argv[i]+2) == 0
+                   ) // this is the processed option
                 {
                     // toggle the state of the option to true
                     option->Exists(true);
