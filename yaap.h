@@ -140,6 +140,12 @@ public:
         return( argVector[pos] );
     };
 
+    //! Get the pos-th arg of type T
+    std::size_t GetNumberOfArguments(  )
+    {
+      return(argVector.size());
+    };
+
     //! Convenience function for 1-subarg argument
     T GetValue( ) {
         return( argVector[0] );
@@ -150,7 +156,7 @@ public:
     {
         std::cout << " [-" << this->Flag()<<"/--"<<this->LongName();
         if( this->nbArgs == yaap::undef )
-            std::cout << " x1 x2 ...";
+            std::cout << " x1,x2,...";
         else
             for( unsigned int i = 0; i < nbArgs; i++ )
             {
@@ -378,15 +384,33 @@ public:
                         this->error = true;
                     }
                     else
-                        for( unsigned int argIdx = 1; argIdx <= nbsubargs ; argIdx++)
+                    {
+                      // If nb of option-arguments is unknown, get the arguments
+                      // with comma-separated split
+                      if( nbsubargs == yaap::undef )
+                      {
+                        std::stringstream args(argv[i + 1]);
+                        std::string arg;
+                        while( std::getline( args, arg, ',' ) )
                         {
-                            // For each sub-argument, memorize the command line value in
-                            // the OptionArg object
-                            std::istringstream argStream( argv[i+argIdx] );
-                            option->AddArgument( argStream );
-                            if( option->ErrorFlag() )
-                                this->error = true;
+                          std::istringstream argStream( arg );
+                          option->AddArgument( argStream );
                         }
+                      }
+                      else
+                      {
+                        for( unsigned int argIdx = 1; argIdx <= nbsubargs; argIdx++ )
+                        {
+                          // For each sub-argument, memorize the command line value in
+                          // the OptionArg object
+                          std::istringstream argStream( argv[i + argIdx] );
+                          option->AddArgument( argStream );
+                          if( option->ErrorFlag() )
+                            this->error = true;
+                        }
+
+                      }
+                    }
                 }
             }
         }
